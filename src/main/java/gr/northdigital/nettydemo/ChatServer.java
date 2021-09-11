@@ -28,12 +28,12 @@ public class ChatServer {
   }
 
   public void run() throws InterruptedException {
-    EventLoopGroup masterGroup = new NioEventLoopGroup();
+    EventLoopGroup bossGroup = new NioEventLoopGroup();
     EventLoopGroup workerGroup = new NioEventLoopGroup();
 
     try {
       ServerBootstrap bootstrap = new ServerBootstrap()
-        .group(masterGroup, workerGroup)
+        .group(bossGroup, workerGroup)
         .channel(NioServerSocketChannel.class)
         .handler(new LoggingHandler(LogLevel.INFO))
         .childHandler(new ChannelInitializer<SocketChannel>() {
@@ -49,7 +49,7 @@ public class ChatServer {
 
       bootstrap.bind(port).sync().channel().closeFuture().sync();
     } finally {
-      masterGroup.shutdownGracefully();
+      bossGroup.shutdownGracefully();
       workerGroup.shutdownGracefully();
     }
   }
